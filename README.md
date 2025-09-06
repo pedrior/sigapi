@@ -11,6 +11,10 @@ alta performance a dados acadêmicos para fins acadêmicos ou pessoais.
 > usuário. As credenciais fornecidas são utilizadas exclusivamente para autenticação no SIGAA em nome do usuário e não
 > são armazenadas pela API.
 
+> [!WARNING]
+> O projeto está em desenvolvimento inicial e possui poucos recursos acessíveis no momento. Mais funcionalidades serão
+> adicionadas futuramente.
+
 ## 🚀 Começando
 
 Siga os passos abaixo para executar o projeto em seu ambiente de desenvolvimento local.
