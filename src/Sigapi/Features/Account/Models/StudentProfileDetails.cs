@@ -1,13 +1,12 @@
 ﻿using Sigapi.Common.Scraping;
 using Sigapi.Common.Scraping.Processing;
-using Sigapi.Features.Account.Scraping.Processing;
 
 namespace Sigapi.Features.Account.Models;
 
 [UsedImplicitly(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.Members)]
 public class StudentProfileDetails
 {
-    [StudentPhoto]
+    [AbsoluteUrl]
     [ValueSelector("img[class*='fotoPerfil']", Attribute = "src")]
     public string? Photo { get; set; }
 
