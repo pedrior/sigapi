@@ -7,18 +7,18 @@ namespace Sigapi.Features.Account.Models;
 public class StudentProfileDetails
 {
     [AbsoluteUrl]
-    [ValueSelector("img[class*='fotoPerfil']", Attribute = "src")]
+    [ValueSelector("img[class*='fotoPerfil']", Attribute = "src", IsRequired = false)]
     public string? Photo { get; set; }
 
     [NullIfEmpty, NormalizeWhitespace]
-    [ValueSelector("textarea[id*='descricaoPessoal']")]
+    [ValueSelector("textarea[id*='descricaoPessoal']", IsRequired = false)]
     public string? Biography { get; set; }
 
     [NullIfEmpty, NormalizeWhitespace]
-    [ValueSelector("textarea[id*='areasInteresse']")]
+    [ValueSelector("textarea[id*='areasInteresse']", IsRequired = false)]
     public string? Interests { get; set; }
 
     [NullIfEmpty, NormalizeWhitespace]
-    [ValueSelector("input[id*='curriculoLattes']")]
+    [ValueSelector("input[id*='curriculoLattes']", IsRequired = false)]
     public string? Curriculum { get; set; }
 }
