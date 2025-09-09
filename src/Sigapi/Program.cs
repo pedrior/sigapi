@@ -33,6 +33,7 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference("/docs", options =>
     {
         options.WithTitle("SigAPI Documentation")
+            .WithModels(false)
             .WithTagSorter(TagSorter.Alpha)
             .WithDefaultOpenAllTags()
             .WithDefaultHttpClient(ScalarTarget.Node, ScalarClient.Axios)
