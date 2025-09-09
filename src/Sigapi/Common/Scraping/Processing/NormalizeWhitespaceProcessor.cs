@@ -13,7 +13,7 @@ public sealed partial class NormalizeWhitespaceProcessor : IDataProcessor
     {
         if (input is not string str || string.IsNullOrWhiteSpace(str))
         {
-            return input;
+            return null;
         }
 
         return WhitespaceRegex()
