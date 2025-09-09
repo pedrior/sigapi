@@ -16,11 +16,17 @@ public sealed class ScrapingService(
 {
     private static readonly ConcurrentDictionary<Type, Func<object>> Factories = new();
 
-    public T Scrape<T>(Page root) where T : new() => (T)ScrapeObject(typeof(T), root.Document.DocumentElement);
+    public T Scrape<T>(Page root) where T : new() => Scrape<T>(root.Document.DocumentElement);
 
-    public T Scrape<T>(IDocument root) where T : new() => (T)ScrapeObject(typeof(T), root.DocumentElement);
+    public T Scrape<T>(IDocument root) where T : new() => Scrape<T>(root.DocumentElement);
 
     public T Scrape<T>(IElement root) where T : new() => (T)ScrapeObject(typeof(T), root);
+
+    public IEnumerable<T> ScrapeMany<T>(Page root) where T : new() => ScrapeMany<T>(root.Document.DocumentElement);
+
+    public IEnumerable<T> ScrapeMany<T>(IDocument root) where T : new() => ScrapeMany<T>(root.DocumentElement);
+
+    public IEnumerable<T> ScrapeMany<T>(IElement root) where T : new() => SelectManyObjects(typeof(T), root).Cast<T>();
 
     private object ScrapeObject(Type type, IElement parent)
     {
@@ -33,6 +39,18 @@ public sealed class ScrapingService(
         }
 
         return instance;
+    }
+
+    private IEnumerable<object> SelectManyObjects(Type type, IElement parent)
+    {
+        if (type.GetCustomAttribute<CollectionSelectorAttribute>() is not { } attribute)
+        {
+            throw new ScrapingException($"Type {type.FullName} must have a " +
+                                        $"{nameof(CollectionSelectorAttribute)} to be scraped as a collection.");
+        }
+
+        var elements = elementSelector.SelectAll(parent, attribute.Selector);
+        return elements.Select(element => ScrapeObject(type, element));
     }
 
     private void ProcessProperty(object instance, PropertyInfo property, IElement parent)
