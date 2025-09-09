@@ -46,12 +46,34 @@ public sealed class DataProcessingPipeline(
             return null;
         }
 
+        const char pairSeparator = ';';
+        const char keyValueSeparator = '=';
+
         try
         {
-            return parameters
-                .Split(';')
-                .Select(x => x.Split('='))
-                .ToDictionary(x => x[0], x => x[1]);
+            var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            var pairs = parameters.Split(pairSeparator, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var pair in pairs)
+            {
+                var index = pair.IndexOf(keyValueSeparator);
+                if (index > 0)
+                {
+                    var key = pair[..index].Trim();
+                    var value = pair[(index + 1)..].Trim();
+
+                    if (!result.TryAdd(key, value))
+                    {
+                        throw new FormatException($"Duplicate key '{key}' found.");
+                    }
+                }
+                else
+                {
+                    throw new FormatException($"Invalid parameter format: '{pair}'. Expected format is 'key=value'.");
+                }
+            }
+
+            return result;
         }
         catch (Exception ex)
         {
