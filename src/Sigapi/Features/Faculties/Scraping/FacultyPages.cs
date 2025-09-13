@@ -2,6 +2,8 @@
 
 public static class FacultyPages
 {
+    public const string FacultyListPage = "sigaa/public/centro/lista.jsf";
+    
     private const string FacultyPageFormat = "sigaa/public/centro/portal.jsf?lc=pt_BR&id={0}";
     private const string DepartmentsPageFormat = "sigaa/public/centro/lista_departamentos.jsf?lc=pt_BR&id={0}";
     private const string GraduatePageFormat = "sigaa/public/centro/lista_programas.jsf?lc=pt_BR&id={0}";

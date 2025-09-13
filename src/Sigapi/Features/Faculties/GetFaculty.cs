@@ -93,9 +93,10 @@ public sealed class GetFacultyQueryHandler(
         var undergraduateProgramsPage = undergraduateProgramsPageTask.Result;
 
         var faculty = scrapingService.Scrape<Faculty>(facultyPage);
-        var departments = scrapingService.ScrapeMany<FacultyDepartment>(departmentsPage);
-        var graduatePrograms = scrapingService.ScrapeMany<FacultyGraduateProgram>(graduateProgramsPage);
-        var undergraduatePrograms = scrapingService.ScrapeMany<FacultyUndergraduateProgram>(undergraduateProgramsPage);
+        var departments = scrapingService.Scrape<IEnumerable<FacultyDepartment>>(departmentsPage);
+        var graduatePrograms = scrapingService.Scrape<IEnumerable<FacultyGraduateProgram>>(graduateProgramsPage);
+        var undergraduatePrograms = scrapingService.Scrape<IEnumerable<FacultyUndergraduateProgram>>(
+            undergraduateProgramsPage);
 
         return new FacultyResponse
         {

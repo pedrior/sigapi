@@ -16,17 +16,26 @@ public sealed class ScrapingService(
 {
     private static readonly ConcurrentDictionary<Type, Func<object>> Factories = new();
 
-    public T Scrape<T>(Page root) where T : new() => Scrape<T>(root.Document.DocumentElement);
+    public T Scrape<T>(Page root) where T : class => Scrape<T>(root.Document.DocumentElement);
 
-    public T Scrape<T>(IDocument root) where T : new() => Scrape<T>(root.DocumentElement);
+    public T Scrape<T>(IDocument root) where T : class => Scrape<T>(root.DocumentElement);
 
-    public T Scrape<T>(IElement root) where T : new() => (T)ScrapeObject(typeof(T), root);
+    public T Scrape<T>(IElement root) where T : class
+    {
+        var targetType = typeof(T);
 
-    public IEnumerable<T> ScrapeMany<T>(Page root) where T : new() => ScrapeMany<T>(root.Document.DocumentElement);
+        if (!IsCollectionType(targetType))
+        {
+            return (T)ScrapeObject(targetType, root);
+        }
 
-    public IEnumerable<T> ScrapeMany<T>(IDocument root) where T : new() => ScrapeMany<T>(root.DocumentElement);
+        var itemType = GetCollectionItemType(targetType);
+        var collection = ScrapeObjectCollection(itemType, root);
 
-    public IEnumerable<T> ScrapeMany<T>(IElement root) where T : new() => SelectManyObjects(typeof(T), root).Cast<T>();
+        // Converts the IEnumerable<object> to the requested collection type T
+        // (e.g., List<Model>, IEnumerable<Model>, Model[]).
+        return ConvertToRequestedCollectionType<T>(collection, itemType);
+    }
 
     private object ScrapeObject(Type type, IElement parent)
     {
@@ -41,16 +50,16 @@ public sealed class ScrapingService(
         return instance;
     }
 
-    private IEnumerable<object> SelectManyObjects(Type type, IElement parent)
+    private IEnumerable<object> ScrapeObjectCollection(Type itemType, IElement parent)
     {
-        if (type.GetCustomAttribute<CollectionSelectorAttribute>() is not { } attribute)
+        if (itemType.GetCustomAttribute<CollectionSelectorAttribute>() is not { } attribute)
         {
-            throw new ScrapingException($"Type {type.FullName} must have a " +
+            throw new ScrapingException($"Type {itemType.FullName} must have a " +
                                         $"{nameof(CollectionSelectorAttribute)} to be scraped as a collection.");
         }
 
         var elements = elementSelector.SelectAll(parent, attribute.Selector);
-        return elements.Select(element => ScrapeObject(type, element));
+        return elements.Select(element => ScrapeObject(itemType, element));
     }
 
     private void ProcessProperty(object instance, PropertyInfo property, IElement parent)
@@ -265,6 +274,47 @@ public sealed class ScrapingService(
 
     private static bool IsComplexType(Type type) => !type.IsPrimitive && type != typeof(string);
 
+    private static bool IsCollectionType(Type type) =>
+        type != typeof(string) && typeof(IEnumerable).IsAssignableFrom(type);
+    
+    private static Type GetCollectionItemType(Type collectionType)
+    {
+        if (collectionType.IsArray)
+        {
+            return collectionType.GetElementType()!;
+        }
+
+        var genericArguments = collectionType.GetGenericArguments();
+        if (collectionType.IsGenericType && genericArguments.Length is 1)
+        {
+            return genericArguments[0];
+        }
+
+        throw new ScrapingException($"Cannot determine the item type for the collection '{collectionType.FullName}'. " +
+                                    "Only arrays and single-argument generic collections are supported.");
+    }
+    
+    private static T ConvertToRequestedCollectionType<T>(IEnumerable<object> collection, Type itemType)
+    {
+        var listType = typeof(List<>).MakeGenericType(itemType);
+        var list = (IList)Activator.CreateInstance(listType)!;
+
+        foreach (var item in collection)
+        {
+            list.Add(item);
+        }
+
+        if (!typeof(T).IsArray)
+        {
+            return (T)list;
+        }
+
+        var array = Array.CreateInstance(itemType, list.Count);
+        list.CopyTo(array, 0);
+        
+        return (T)(object)array;
+    }
+    
     private static void ValidateRequiredElement(bool isRequired, string selector)
     {
         if (isRequired)
