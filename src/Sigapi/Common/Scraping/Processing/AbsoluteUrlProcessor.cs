@@ -5,7 +5,7 @@ namespace Sigapi.Common.Scraping.Processing;
 [UsedImplicitly]
 public sealed class AbsoluteUrlProcessor(IOptions<PageFetcherOptions> pageFetcherOptions) : IDataProcessor
 {
-    public const string Name = "student-photo";
+    public const string Name = "absolute-url";
     
     public string UniqueName => Name;
 
