@@ -10,7 +10,6 @@ public sealed class StudentProfile
     [ValueSelector("td.detalhes-usuario-nome > span")]
     public string Name { get; set; } = string.Empty;
     
-    [NormalizeWhitespace]
     [ValueSelector("#detalhes-usuario tbody > tr:last-child > td:last-child")]
     public string Email { get; set; } = string.Empty;
 

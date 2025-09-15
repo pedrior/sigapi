@@ -11,15 +11,15 @@ public sealed class FacultyUndergraduateProgram
     [ValueSelector("td:last-child > a", Attribute = "href")]
     public string Id { get; set; } = string.Empty;
 
-    [NormalizeWhitespace, Regex(@"^(.*?)(?=\/)"), TitleCase]
+    [Regex(@"^(.*?)(?=\/)"), TitleCase]
     [ValueSelector("td")]
     public string Name { get; set; } = string.Empty;
 
-    [NormalizeWhitespace, TitleCase]
+    [TitleCase]
     [ValueSelector("td:nth-child(2)")]
     public string City { get; set; } = string.Empty;
 
-    [NormalizeWhitespace, TitleCase]
+    [TitleCase]
     [ValueSelector("td:nth-child(4)")]
     public string? Coordinator { get; set; }
 
