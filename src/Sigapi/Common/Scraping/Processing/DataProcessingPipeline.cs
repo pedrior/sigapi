@@ -1,8 +1,6 @@
 ﻿namespace Sigapi.Common.Scraping.Processing;
 
-public sealed class DataProcessingPipeline(
-    IEnumerable<IDataProcessor> processors,
-    ILogger<DataProcessingPipeline> logger) : IDataProcessingPipeline
+public sealed class DataProcessingPipeline(IEnumerable<IDataProcessor> processors) : IDataProcessingPipeline
 {
     // Create a lookup for efficient retrieval by name.
     private readonly ILookup<string, IDataProcessor> processors = processors
@@ -18,11 +16,8 @@ public sealed class DataProcessingPipeline(
             var processor = processors[attribute.Name].FirstOrDefault();
             if (processor is null)
             {
-                logger.LogWarning("No data processor found for {Name}, skipping", attribute.Name);
-                continue;
+                throw new DataProcessorException($"No data processor found for {attribute.Name}.");
             }
-
-            logger.LogDebug("Processing {Name} with parameters: {Parameters}", attribute.Name, attribute.Parameters);
 
             var parameters = ParseParameters(attribute.Parameters);
 
