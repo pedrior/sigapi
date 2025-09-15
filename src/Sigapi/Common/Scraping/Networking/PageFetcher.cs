@@ -1,4 +1,4 @@
-﻿using AngleSharp.Html.Parser;
+﻿using Sigapi.Common.Scraping.Document;
 using Sigapi.Common.Scraping.Networking.Sessions;
 
 namespace Sigapi.Common.Scraping.Networking;
@@ -7,16 +7,16 @@ public sealed class PageFetcher : IPageFetcher
 {
     private readonly HttpClient httpClient;
     private readonly ISessionFactory sessionFactory;
-    private readonly IHtmlParser htmlParser;
+    private readonly IDocumentParser documentParser;
 
     public PageFetcher(HttpClient httpClient,
         ISessionFactory sessionFactory,
-        IHtmlParser htmlParser,
+        IDocumentParser documentParser,
         IOptions<PageFetcherOptions> options)
     {
         this.httpClient = httpClient;
         this.sessionFactory = sessionFactory;
-        this.htmlParser = htmlParser;
+        this.documentParser = documentParser;
 
         InitializeHttpClient(options.Value);
     }
@@ -73,7 +73,7 @@ public sealed class PageFetcher : IPageFetcher
             response.EnsureSuccessStatusCode();
 
             var html = await response.Content.ReadAsStringAsync(cancellationToken);
-            var document = await htmlParser.ParseDocumentAsync(html, cancellationToken);
+            var document = await documentParser.ParseAsync(html, cancellationToken);
             var absoluteUrl = response.RequestMessage?.RequestUri?.ToString() ?? "about:blank";
 
             return new Page(absoluteUrl, document, session);

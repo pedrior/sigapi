@@ -11,8 +11,7 @@ public sealed class MultipleEnrollmentStrategy(
     public bool CanHandle(Page page)
     {
         var isEnrollmentSelector = page.Url.Contains("vinculos.jsf");
-        var isMultipleEnrollment = page.Document.QuerySelector(
-            EnrollmentSelector.EnrollmentSelectorLinkSelector) is not null;
+        var isMultipleEnrollment = page.Element.Query(EnrollmentSelector.EnrollmentSelectorLinkSelector) is not null;
 
         return isEnrollmentSelector || isMultipleEnrollment;
     }

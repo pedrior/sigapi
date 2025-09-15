@@ -3,7 +3,6 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
-using AngleSharp.Html.Parser;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -26,6 +25,8 @@ using Sigapi.Common.Scraping.Networking.Redirection;
 using Sigapi.Common.Scraping.Networking.Resilience;
 using Sigapi.Common.Scraping.Networking.Sessions;
 using Sigapi.Common.Scraping.Processing;
+using Sigapi.Common.Scraping.Reflection;
+using Sigapi.Common.Scraping.Strategies;
 using Sigapi.Features.Account.Scraping;
 using Sigapi.OpenApi;
 
@@ -283,18 +284,24 @@ public static class Services
 
         services.AddTransient<ISessionFactory, SessionFactory>();
 
-        services.AddSingleton<IHtmlParser, HtmlParser>();
-
-        services.AddSingleton<IScrapingService, ScrapingService>();
-        services.AddSingleton<IElementSelector, ElementSelector>();
+        services.AddSingleton<IDocumentParser, DocumentParser>();
+        
         services.AddSingleton<IDataProcessingPipeline, DataProcessingPipeline>();
         services.AddSingleton<ITypeConversionService, TypeConversionService>();
-
-        // Register all IDataProcessor in this assembly as singleton.
+        
         services.Scan(scan => scan.FromAssemblies(ThisAssembly)
             .AddClasses(classes => classes.AssignableTo<IDataProcessor>())
             .AsImplementedInterfaces()
             .WithSingletonLifetime());
+        
+        services.AddSingleton<IPropertyScrapingStrategy, ComplexObjectPropertyStrategy>();
+        services.AddSingleton<IPropertyScrapingStrategy, CollectionPropertyStrategy>();
+        services.AddSingleton<IPropertyScrapingStrategy, DictionaryPropertyStrategy>();
+        services.AddSingleton<IPropertyScrapingStrategy, ElementExistsPropertyStrategy>();
+        services.AddSingleton<IPropertyScrapingStrategy, PrimitivePropertyStrategy>();
+        
+        services.AddSingleton<ITypeMetadataProvider, TypeMetadataProvider>();
+        services.AddTransient<IScrapingService, ScrapingService>();
 
         services.AddTransient<IEnrollmentProvider, EnrollmentProvider>();
         services.AddTransient<IEnrollmentSelector, EnrollmentSelector>();

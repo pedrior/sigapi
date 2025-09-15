@@ -9,8 +9,7 @@ public sealed class SingleEnrollmentStrategy(IEnrollmentProvider enrollmentProvi
     public bool CanHandle(Page page)
     {
         var isStudentPage = page.Url.Contains("discente.jsf");
-        var isSingleEnrollment = page.Document.QuerySelector(
-            EnrollmentSelector.EnrollmentSelectorLinkSelector) is null;
+        var isSingleEnrollment = page.Element.Query(EnrollmentSelector.EnrollmentSelectorLinkSelector) is null;
 
         return isStudentPage && isSingleEnrollment;
     }
