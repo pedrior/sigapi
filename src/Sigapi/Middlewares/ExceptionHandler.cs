@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Sigapi.Common.Scraping.Networking;
 
-namespace Sigapi.Common.Errors;
+namespace Sigapi.Middlewares;
 
 public sealed class ExceptionHandler : IExceptionHandler
 {

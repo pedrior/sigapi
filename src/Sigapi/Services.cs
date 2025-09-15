@@ -28,6 +28,7 @@ using Sigapi.Common.Scraping.Processing;
 using Sigapi.Common.Scraping.Reflection;
 using Sigapi.Common.Scraping.Strategies;
 using Sigapi.Features.Account.Scraping;
+using Sigapi.Middlewares;
 using Sigapi.OpenApi;
 
 namespace Sigapi;
