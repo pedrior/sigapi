@@ -8,28 +8,6 @@ internal static class CacheExtensions
     {
         Flags = HybridCacheEntryFlags.DisableUnderlyingData
     };
-    
-    public static async ValueTask<ErrorOr<T>> GetOrCreateFromResultAsync<T>(this HybridCache cache,
-        string key,
-        Func<CancellationToken, Task<ErrorOr<T>>> factory,
-        HybridCacheEntryOptions? options = null,
-        IEnumerable<string>? tags = null,
-        CancellationToken cancellationToken = default)
-    {
-        var (exists, cached) = await cache.TryGetValueAsync<T>(key, cancellationToken: cancellationToken);
-        if (exists)
-        {
-            return cached;
-        }
-
-        return await factory(cancellationToken)
-            .ThenDoAsync(async value => await cache.SetAsync(
-                key,
-                value,
-                options,
-                tags,
-                cancellationToken: cancellationToken));
-    }
 
     public static async Task<T?> GetAsync<T>(this HybridCache cache,
         string key,
