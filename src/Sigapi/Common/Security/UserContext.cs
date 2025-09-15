@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
-using Sigapi.Common.Auth.Tokens;
+using Sigapi.Common.Security.Tokens;
 
-namespace Sigapi.Common.Auth;
+namespace Sigapi.Common.Security;
 
 public sealed class UserContext : IUserContext
 {

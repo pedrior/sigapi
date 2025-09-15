@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Sigapi.Common.Auth.Tokens;
+namespace Sigapi.Common.Security.Tokens;
 
 public sealed class SecurityTokenProvider(
     TimeProvider time,

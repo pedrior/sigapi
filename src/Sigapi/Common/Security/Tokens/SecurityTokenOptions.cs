@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Sigapi.Common.Auth.Tokens;
+namespace Sigapi.Common.Security.Tokens;
 
 public sealed record SecurityTokenOptions
 {

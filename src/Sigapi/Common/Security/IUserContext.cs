@@ -1,4 +1,4 @@
-﻿namespace Sigapi.Common.Auth;
+﻿namespace Sigapi.Common.Security;
 
 public interface IUserContext
 {

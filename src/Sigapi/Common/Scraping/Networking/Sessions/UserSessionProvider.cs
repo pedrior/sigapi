@@ -1,4 +1,4 @@
-﻿using Sigapi.Common.Auth;
+﻿using Sigapi.Common.Security;
 
 namespace Sigapi.Common.Scraping.Networking.Sessions;
 

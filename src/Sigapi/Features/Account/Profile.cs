@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Caching.Hybrid;
-using Sigapi.Common.Auth;
 using Sigapi.Common.Endpoints;
 using Sigapi.Common.Errors;
 using Sigapi.Common.Messaging;
@@ -7,6 +6,7 @@ using Sigapi.Common.RateLimiting;
 using Sigapi.Common.Scraping;
 using Sigapi.Common.Scraping.Networking;
 using Sigapi.Common.Scraping.Networking.Sessions;
+using Sigapi.Common.Security;
 using Sigapi.Contracts.Account;
 using Sigapi.Features.Account.Models;
 using Sigapi.Features.Account.Scraping;

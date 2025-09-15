@@ -1,4 +1,4 @@
-﻿namespace Sigapi.Common.Auth.Tokens;
+﻿namespace Sigapi.Common.Security.Tokens;
 
 public interface ISecurityTokenProvider
 {

@@ -1,10 +1,10 @@
-﻿using Sigapi.Common.Auth;
-using Sigapi.Common.Endpoints;
+﻿using Sigapi.Common.Endpoints;
 using Sigapi.Common.Errors;
 using Sigapi.Common.Messaging;
 using Sigapi.Common.RateLimiting;
 using Sigapi.Common.Scraping.Networking;
 using Sigapi.Common.Scraping.Networking.Sessions;
+using Sigapi.Common.Security;
 using Sigapi.Features.Account.Scraping;
 using Sigapi.OpenApi.Extensions;
 
