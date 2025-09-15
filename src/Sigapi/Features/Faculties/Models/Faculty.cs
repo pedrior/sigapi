@@ -6,19 +6,19 @@ namespace Sigapi.Features.Faculties.Models;
 [UsedImplicitly(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.Members)]
 public sealed class Faculty
 {
-    [RegexReplace(@"(^[a-zA-Z\s]+-\s*)|\s*\([a-zA-Z]+\)$"), TitleCase]
+    [Regex(@"(^[a-zA-Z\s]+-\s*)|\s*\([a-zA-Z]+\)$", replacement: ""), TitleCase]
     [ValueSelector("#colDirTop > h2")]
     public string LongName { get; set; } = string.Empty;
 
-    [RegexReplace(@"(?i)\bnão informado\b")]
+    [Regex(@"(?i)\bnão informado\b", replacement: "")]
     [ValueSelector("#colDirCorpo > dl:not(.apresentacao) > dd:nth-child(6)", IsRequired = false)]
     public string? Address { get; set; }
     
-    [RegexReplace(@"(?i)\bnão informado\b")]
+    [Regex(@"(?i)\bnão informado\b", replacement: "")]
     [ValueSelector("#colDirCorpo > dl:not(.apresentacao) > dd:nth-child(2)", IsRequired = false)]
     public string? Director { get; set; }
     
-    [RegexReplace(@"(?i)\bnão informado\b")]
+    [Regex(@"(?i)\bnão informado\b", replacement: "")]
     [ValueSelector("#colDirCorpo > dl.apresentacao", IsRequired = false)]
     public string? Description { get; set; }
     
