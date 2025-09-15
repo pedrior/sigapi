@@ -6,7 +6,7 @@ namespace Sigapi.Features.Account.Models;
 [UsedImplicitly(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.Members)]
 public sealed class StudentProfileProgram
 {
-    [TitleCase]
+    [TextCasing(TextCasing.Title)]
     [ValueSelector(".visualizacao > tbody > tr:nth-child(2) > td")]
     public string StudentName { get; set; } = string.Empty;
 }

@@ -6,7 +6,7 @@ namespace Sigapi.Features.Faculties.Models;
 [UsedImplicitly(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.Members)]
 public sealed class Faculty
 {
-    [Regex(@"(^[a-zA-Z\s]+-\s*)|\s*\([a-zA-Z]+\)$", replacement: ""), TitleCase]
+    [Regex(@"(^[a-zA-Z\s]+-\s*)|\s*\([a-zA-Z]+\)$", replacement: ""), TextCasing(TextCasing.Title)]
     [ValueSelector("#colDirTop > h2")]
     public string LongName { get; set; } = string.Empty;
 

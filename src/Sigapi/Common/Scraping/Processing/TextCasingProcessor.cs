@@ -4,9 +4,11 @@ using System.Text.RegularExpressions;
 namespace Sigapi.Common.Scraping.Processing;
 
 [UsedImplicitly]
-public sealed partial class TitleCaseProcessor : IDataProcessor
+public sealed partial class TextCasingProcessor : IDataProcessor
 {
-    public const string Name = "title-case";
+    public const string Name = "text-casing";
+
+    public const string CasingParameter = "casing";
 
     private static readonly string[] LowercaseWords =
     [
@@ -14,6 +16,8 @@ public sealed partial class TitleCaseProcessor : IDataProcessor
         "no", "nos", "na", "nas", "e", "ou", "mas", "nem", "como", "por",
         "para", "com", "sem", "sob", "sobre", "até", "depois", "antes"
     ];
+
+    private static readonly CultureInfo InvariantCulture = CultureInfo.InvariantCulture;
 
     public string UniqueName => Name;
 
@@ -24,7 +28,26 @@ public sealed partial class TitleCaseProcessor : IDataProcessor
             return input;
         }
 
-        var culture = CultureInfo.InvariantCulture;
+        if (parameters?.TryGetValue(CasingParameter, out var casingParameter) is not true
+            || string.IsNullOrWhiteSpace(casingParameter))
+        {
+            throw new ArgumentException(
+                $"The '{CasingParameter}' parameter is required and cannot be empty.",
+                nameof(parameters));
+        }
+
+        var casing = Enum.Parse<TextCasing>(casingParameter, true);
+        return casing switch
+        {
+            TextCasing.Title => ToTitleCase(str),
+            TextCasing.Upper => str.ToUpperInvariant(),
+            TextCasing.Lower => str.ToLowerInvariant(),
+            _ => throw new ArgumentOutOfRangeException(nameof(casing), casing, null)
+        };
+    }
+
+    private static string ToTitleCase(string str)
+    {
         var words = str.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
         for (var i = 0; i < words.Length; i++)
@@ -49,7 +72,7 @@ public sealed partial class TitleCaseProcessor : IDataProcessor
                 }
                 else
                 {
-                    parts[j] = Capitalize(part, culture);
+                    parts[j] = Capitalize(part, InvariantCulture);
                 }
             }
 

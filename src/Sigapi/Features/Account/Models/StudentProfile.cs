@@ -6,7 +6,7 @@ namespace Sigapi.Features.Account.Models;
 [UsedImplicitly(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.Members)]
 public sealed class StudentProfile
 {
-    [TitleCase]
+    [TextCasing(TextCasing.Title)]
     [ValueSelector("td.detalhes-usuario-nome > span")]
     public string Name { get; set; } = string.Empty;
     

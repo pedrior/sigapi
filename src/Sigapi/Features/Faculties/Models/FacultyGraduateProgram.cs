@@ -11,7 +11,7 @@ public sealed class FacultyGraduateProgram
     [ValueSelector("td > a", Attribute = "href")]
     public string Id { get; set; } = string.Empty;
     
-    [Regex(@"(^[a-zA-Z\s]+-\s*)|\s*\([a-zA-Z]+\)$", replacement: ""), TitleCase]
+    [Regex(@"(^[a-zA-Z\s]+-\s*)|\s*\([a-zA-Z]+\)$", replacement: ""), TextCasing(TextCasing.Title)]
     [ValueSelector("td > a")]
     public string Name { get; set; } = string.Empty;
 }
