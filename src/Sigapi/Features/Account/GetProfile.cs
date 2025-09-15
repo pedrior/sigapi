@@ -15,7 +15,7 @@ using Sigapi.OpenApi.Extensions;
 namespace Sigapi.Features.Account;
 
 [UsedImplicitly]
-public sealed class ProfileEndpoint : IEndpoint
+public sealed class GetProfileEndpoint : IEndpoint
 {
     public void Map(IEndpointRouteBuilder route)
     {
@@ -35,30 +35,30 @@ public sealed class ProfileEndpoint : IEndpoint
     }
 
     private static Task<IResult> GetProfileAsync(
-        IRequestHandler<ProfileQuery, ProfileResponse> handler,
+        IRequestHandler<GetProfileQuery, ProfileResponse> handler,
         HttpContext context,
         CancellationToken cancellationToken)
     {
-        return handler.HandleAsync(new ProfileQuery(), cancellationToken)
+        return handler.HandleAsync(new GetProfileQuery(), cancellationToken)
             .Match(Results.Ok, errors => errors.ToProblemDetails());
     }
 }
 
-public sealed record ProfileQuery : IRequest;
+public sealed record GetProfileQuery : IRequest;
 
 [UsedImplicitly]
-public sealed class ProfileQueryHandler(
+public sealed class GetProfileQueryHandler(
     HybridCache cache,
     IPageFetcher pageFetcher,
     IScrapingService scrapingService,
-    IUserContext userContext) : IRequestHandler<ProfileQuery, ProfileResponse>
+    IUserContext userContext) : IRequestHandler<GetProfileQuery, ProfileResponse>
 {
     private static readonly HybridCacheEntryOptions CacheEntryOptions = new()
     {
         Expiration = TimeSpan.FromMinutes(30)
     };
 
-    public async Task<ErrorOr<ProfileResponse>> HandleAsync(ProfileQuery query,
+    public async Task<ErrorOr<ProfileResponse>> HandleAsync(GetProfileQuery query,
         CancellationToken cancellationToken)
     {
         var response = await cache.GetOrCreateAsync(
