@@ -72,60 +72,38 @@ public sealed class GetProfileQueryHandler(
 
     private async ValueTask<ProfileResponse> GetProfileAsync(CancellationToken cancellationToken = default)
     {
-        var studentTask = ScrapeStudentAsync(cancellationToken);
-        var detailsTask = ScrapeStudentDetailsAsync(cancellationToken);
-
-        await Task.WhenAll(studentTask, detailsTask);
-
-        var student = studentTask.Result;
-        var details = detailsTask.Result;
-
-        var program = student.IsProgramAvailable
-            ? await ScrapeStudentProgramAsync(cancellationToken)
-            : null;
-
-        return new ProfileResponse
-        {
-            Name = program?.StudentName ?? student.Name,
-            Email = student.Email,
-            Username = userContext.Username,
-            Enrollment = userContext.Enrollment,
-            Enrollments = userContext.Enrollments,
-            Photo = details.Photo,
-            Biography = details.Biography,
-            Interests = details.Interests,
-            Curriculum = details.Curriculum,
-            IsEnrolledInUndergraduateProgram = student.IsProgramAvailable
-        };
-    }
-
-    private async Task<StudentProfile> ScrapeStudentAsync(CancellationToken cancellationToken)
-    {
-        var profilePage = await pageFetcher.FetchAsync(
+        var page = await pageFetcher.FetchAsync(
             StudentPages.ProfileUrl,
             SessionPolicy.User,
             cancellationToken: cancellationToken);
 
-        return scrapingService.Scrape<StudentProfile>(profilePage);
+        var profile = scrapingService.Scrape<StudentProfile>(page);
+        var program = profile.IsProgramAvailable
+            ? await GetStudentProgramAsync(cancellationToken)
+            : null;
+
+        return new ProfileResponse
+        {
+            Name = program?.StudentName ?? profile.Name,
+            Email = profile.Email,
+            Username = userContext.Username,
+            Enrollment = userContext.Enrollment,
+            Enrollments = userContext.Enrollments,
+            Photo = profile.Photo,
+            Biography = profile.Biography,
+            Interests = profile.Interests,
+            Curriculum = profile.Curriculum,
+            IsEnrolledInUndergraduateProgram = profile.IsProgramAvailable
+        };
     }
 
-    private async Task<StudentProfileDetails> ScrapeStudentDetailsAsync(CancellationToken cancellationToken)
+    private async Task<StudentProfileProgram> GetStudentProgramAsync(CancellationToken cancellationToken)
     {
-        var detailsPage = await pageFetcher.FetchAsync(
-            StudentPages.DetailsUrl,
-            SessionPolicy.User,
-            cancellationToken: cancellationToken);
-
-        return scrapingService.Scrape<StudentProfileDetails>(detailsPage);
-    }
-
-    private async Task<StudentProfileProgram> ScrapeStudentProgramAsync(CancellationToken cancellationToken)
-    {
-        var programPage = await pageFetcher.FetchAsync(
+        var page = await pageFetcher.FetchAsync(
             StudentPages.ProgramUrl,
             SessionPolicy.User,
             cancellationToken: cancellationToken);
 
-        return scrapingService.Scrape<StudentProfileProgram>(programPage);
+        return scrapingService.Scrape<StudentProfileProgram>(page);
     }
 }
