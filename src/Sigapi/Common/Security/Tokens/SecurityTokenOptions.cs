@@ -8,6 +8,6 @@ public sealed record SecurityTokenOptions
 
     public string? Audience { get; init; }
 
-    [Required]
+    [Required, MinLength(32)]
     public string Key { get; init; } = null!;
 }
